@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {useNavigate} from "react-router-dom"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -16,10 +17,17 @@ import Logo from "@/components/custom/Logo";
 import FormWarpper from "@/components/custom/FormWarpper";
 import FormText from "@/components/custom/FormText";
 import { Link } from "react-router-dom";
-import { createUserPrisum } from "@/lib/AppWrite/Api";
+import { useCreateUser } from "@/lib/react-query/Mutation";
+
 // import FormRow from "@/components/custom/FormRow";
+
 const SignUpForm = () => {
-  const isLoaing = false;
+
+  const naviagte = useNavigate();
+
+  //  use customHook start
+  const { mutateAsync: createUser, isPending: isUserCreating } = useCreateUser();
+  // signUp  validation
   const form = useForm<z.infer<typeof SignUpValidation>>({
     resolver: zodResolver(SignUpValidation),
     defaultValues: {
@@ -32,8 +40,11 @@ const SignUpForm = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
-    const newdata = await createUserPrisum(values);
-    console.log(newdata);
+      const newUser = await createUser(values);
+
+      if (newUser) {
+          naviagte("/")
+      }
   }
 
   return (
@@ -117,12 +128,13 @@ const SignUpForm = () => {
               </FormItem>
             )}
           />
+
           <Button
             type="submit"
             className="shad-button_primary"
-            disabled={isLoaing}
+            disabled={isUserCreating}
           >
-            {isLoaing ? "Loading..." : "Submit"}
+            {isUserCreating ? "Loading..." : "Submit"}
           </Button>
         </form>
         <p className="mt-4 text-small-regular text-light-2  text-center ">

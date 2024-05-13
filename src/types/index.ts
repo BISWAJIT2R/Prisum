@@ -32,11 +32,11 @@ export type IUpdatePost = {
 };
 
 export type IUser = {
-  id: string;
+  accountId: string;
   name: string;
   username: string;
   email: string;
-  imageUrl: string;
+  userImg: URL;
   bio: string;
 };
 
@@ -46,3 +46,8 @@ export type INewUser = {
   username: string;
   password: string;
 };
+
+export type ILogUser = {
+  email: string,
+  password: string,
+}
